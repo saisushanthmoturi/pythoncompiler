@@ -1,4 +1,4 @@
-# 🔬 MiniPy Compiler
+#  MiniPy Compiler
 
 A complete, educational mini-compiler written in **Python** that compiles a
 simple custom language (MiniPy) through **all 6 classical stages** of a
@@ -6,7 +6,7 @@ compiler, producing executable Python as its target.
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 compiler/
@@ -23,7 +23,7 @@ compiler/
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ```bash
 # Run the built-in demo (shows all stages)
@@ -38,7 +38,7 @@ python main.py sample.minipy --save
 
 ---
 
-## 🗺️ The 6 Compiler Stages
+##  The 6 Compiler Stages
 
 ### Stage 1 — Lexical Analysis (`lexer.py`)
 
@@ -280,7 +280,7 @@ Line 12: Type mismatch — declared 'int' but expression is 'string'.
 
 ---
 
-## 📊 Example Output (Demo Program)
+## Example Output (Demo Program)
 
 ```
 ======================================================================
