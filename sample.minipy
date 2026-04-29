@@ -1,0 +1,20 @@
+# ── sample.minipy ─────────────────────────────────────────────────────────────
+# A sample MiniPy program to try with the compiler.
+# Run:  python main.py sample.minipy
+
+# Fibonacci numbers up to N
+let n: int = 10;
+let a: int = 0;
+let b: int = 1;
+
+print(a);
+print(b);
+
+let count = 2;
+while (count < n) {
+    let temp = a + b;
+    a = b;
+    b = temp;
+    print(b);
+    count = count + 1;
+}

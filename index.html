@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniPy Compiler Output</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #2d3436;
+            --accent-color: #0984e3;
+            --border-color: #dfe6e9;
+            --code-bg: #fdfdfd;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            margin-top: 0;
+            font-weight: 600;
+            color: var(--text-color);
+            border-bottom: 2px solid var(--accent-color);
+            display: inline-block;
+            padding-bottom: 5px;
+            margin-bottom: 30px;
+        }
+
+        .output-box {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            white-space: pre;
+            color: #444;
+            tab-size: 4;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #636e72;
+        }
+
+        /* Highlighting stage headers */
+        .stage-header {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1> MiniPy Compiler Output</h1>
+    
+    <div class="output-box">
+
+
+--- Stage 1: Lexical Analysis ----------------------------------------
+Produced 84 tokens.
+  ┌────────┬──────────────┬────────────┬─────────────┐
+  │ Symbol │ Category     │ First Line │ Occurrences │
+  ├────────┼──────────────┼────────────┼─────────────┤
+  │ let    │ KEYWORD      │ line 2     │           5 │
+  │ a      │ IDENTIFIER   │ line 2     │           4 │
+  │ int    │ KEYWORD      │ line 2     │           2 │
+  │ b      │ IDENTIFIER   │ line 3     │           4 │
+  │ msg    │ IDENTIFIER   │ line 4     │           2 │
+  │ string │ KEYWORD      │ line 4     │           1 │
+  │ sum    │ IDENTIFIER   │ line 5     │           2 │
+  │ print  │ KEYWORD      │ line 6     │           5 │
+  │ if     │ KEYWORD      │ line 8     │           1 │
+  │ else   │ KEYWORD      │ line 8     │           1 │
+  │ i      │ IDENTIFIER   │ line 9     │           5 │
+  │ while  │ KEYWORD      │ line 10    │           1 │
+  └────────┴──────────────┴────────────┴─────────────┘
+
+--- Stage 2: Syntax Analysis -----------------------------------------
+└── Program
+    ├── VarDecl(a, int)
+    │   └── Number(10)
+    ├── VarDecl(b, int)
+    │   └── Number(3)
+    ├── VarDecl(msg, string)
+    │   └── String
+    ├── VarDecl(sum, None)
+    │   └── BinaryOp
+    │       ├── Ident(a)
+    │       └── Ident(b)
+    ├── Print
+    │   └── Ident(msg)
+    ├── Print
+    │   └── Ident(sum)
+    ├── If
+    │   ├── BinaryOp
+    │   │   ├── Ident(a)
+    │   │   └── Ident(b)
+    │   ├── Print
+    │   │   └── Ident(a)
+    │   └── Print
+    │       └── Ident(b)
+    ├── VarDecl(i, None)
+    │   └── Number(1)
+    └── While
+        ├── BinaryOp
+        │   ├── Ident(i)
+        │   └── Number(3)
+        ├── Print
+        │   └── Ident(i)
+        └── Assign(i)
+            └── BinaryOp
+                ├── Ident(i)
+                └── Number(1)
+
+--- Stage 3: Semantic Analysis ---------------------------------------
+Semantic checks passed.
+
+--- Stage 4: IR Generation -------------------------------------------
+Generated 29 TAC instructions.
+    t0 = 10
+    a = t0
+    t1 = 3
+    b = t1
+    t2 = 'Hello MiniPy!'
+    msg = t2
+    t3 = a + b
+    sum = t3
+    PRINT msg
+    PRINT sum
+    t4 = a > b
+    IF t4 == 0 GOTO L0
+    PRINT a
+    GOTO L1
+L0:
+    PRINT b
+L1:
+    t5 = 1
+    i = t5
+L2:
+    t6 = 3
+    t7 = i <= t6
+    IF t7 == 0 GOTO L3
+    PRINT i
+    t8 = 1
+    t9 = i + t8
+    i = t9
+    GOTO L2
+L3:
+
+Quadruples Table:
+  ┌─────┬──────────┬──────────┬──────────┬──────────┐
+  │  #  │ Op       │ Arg1     │ Arg2     │ Result   │
+  ├─────┼──────────┼──────────┼──────────┼──────────┤
+  │   0 │ LOAD     │ 10       │ _        │ t0       │
+  │   1 │ :=       │ t0       │ _        │ a        │
+  │   2 │ LOAD     │ 3        │ _        │ t1       │
+  │   3 │ :=       │ t1       │ _        │ b        │
+  │   4 │ LOAD     │ 'Hello MiniPy!' │ _        │ t2       │
+  │   5 │ :=       │ t2       │ _        │ msg      │
+  │   6 │ +        │ a        │ b        │ t3       │
+  │   7 │ :=       │ t3       │ _        │ sum      │
+  │   8 │ PRINT    │ msg      │ _        │ _        │
+  │   9 │ PRINT    │ sum      │ _        │ _        │
+  │  10 │ >        │ a        │ b        │ t4       │
+  │  11 │ JZ       │ t4       │ L0       │ _        │
+  │  12 │ PRINT    │ a        │ _        │ _        │
+  │  13 │ JMP      │ L1       │ _        │ _        │
+  │  14 │ LABEL    │ L0       │ _        │ _        │
+  │  15 │ PRINT    │ b        │ _        │ _        │
+  │  16 │ LABEL    │ L1       │ _        │ _        │
+  │  17 │ LOAD     │ 1        │ _        │ t5       │
+  │  18 │ :=       │ t5       │ _        │ i        │
+  │  19 │ LABEL    │ L2       │ _        │ _        │
+  │  20 │ LOAD     │ 3        │ _        │ t6       │
+  │  21 │ <=       │ i        │ t6       │ t7       │
+  │  22 │ JZ       │ t7       │ L3       │ _        │
+  │  23 │ PRINT    │ i        │ _        │ _        │
+  │  24 │ LOAD     │ 1        │ _        │ t8       │
+  │  25 │ +        │ i        │ t8       │ t9       │
+  │  26 │ :=       │ t9       │ _        │ i        │
+  │  27 │ JMP      │ L2       │ _        │ _        │
+  │  28 │ LABEL    │ L3       │ _        │ _        │
+  └─────┴──────────┴──────────┴──────────┴──────────┘
+
+--- Stage 5: Optimization --------------------------------------------
+[Constant Folding] t3 = 10 + 3 -> 13 | t4 = 10 > 3 -> 1
+[Dead Code Elimination] Removed     t0 = 10 | Removed     t1 = 3 | Removed     t3 = 13 | Removed     t4 = 1 | Removed     t5 = 1 | Removed     t6 = 3 | Removed     t8 = 1
+Optimized 29 -> 22 instructions.
+
+--- Stage 6: Code Generation -----------------------------------------
+FIFO Register Allocation Log:
+  ┌────────┬──────┬──────────────┬──────────────────────────────────────────┐
+  │ Action │ Reg  │ Variable     │ FIFO Queue (oldest -> newest)             │
+  ├────────┼──────┼──────────────┼──────────────────────────────────────────┤
+  │ ALLOC  │ R0   │ a            │ a->R0                                    │
+  │ ALLOC  │ R1   │ b            │ a->R0 -> b->R1                           │
+  │ ALLOC  │ R2   │ t2           │ a->R0 -> b->R1 -> t2->R2                 │
+  │ REUSE  │ R2   │ t2           │ a->R0 -> b->R1 -> t2->R2                 │
+  │ ALLOC  │ R3   │ msg          │ a->R0 -> b->R1 -> t2->R2 -> msg->R3      │
+  │ ALLOC  │ R4   │ sum          │ a->R0 -> b->R1 -> t2->R2 -> msg->R3 -> sum->R4 │
+  │ REUSE  │ R3   │ msg          │ a->R0 -> b->R1 -> t2->R2 -> msg->R3 -> sum->R4 │
+  │ ALLOC  │ R5   │ _pr          │ a->R0 -> b->R1 -> t2->R2 -> msg->R3 -> sum->R4 -> _pr->R5 │
+  │ ALLOC  │ R6   │ _cj          │ a->R0 -> b->R1 -> t2->R2 -> msg->R3 -> sum->R4 -> _pr->R5 -> _cj->R6 │
+  │ REUSE  │ R5   │ _pr          │ a->R0 -> b->R1 -> t2->R2 -> msg->R3 -> sum->R4 -> _pr->R5 -> _cj->R6 │
+  │ REUSE  │ R5   │ _pr          │ a->R0 -> b->R1 -> t2->R2 -> msg->R3 -> sum->R4 -> _pr->R5 -> _cj->R6 │
+  │ ALLOC  │ R7   │ i            │ a->R0 -> b->R1 -> t2->R2 -> msg->R3 -> sum->R4 -> _pr->R5 -> _cj->R6 -> i->R7 │
+  │ REUSE  │ R7   │ i            │ a->R0 -> b->R1 -> t2->R2 -> msg->R3 -> sum->R4 -> _pr->R5 -> _cj->R6 -> i->R7 │
+  │ SPILL  │ R0   │ a            │ b->R1 -> t2->R2 -> msg->R3 -> sum->R4 -> _pr->R5 -> _cj->R6 -> i->R7 │
+  │ ALLOC  │ R0   │ t7           │ b->R1 -> t2->R2 -> msg->R3 -> sum->R4 -> _pr->R5 -> _cj->R6 -> i->R7 -> t7->R0 │
+  │ SPILL  │ R1   │ b            │ t2->R2 -> msg->R3 -> sum->R4 -> _pr->R5 -> _cj->R6 -> i->R7 -> t7->R0 │
+  │ ALLOC  │ R1   │ _ir          │ t2->R2 -> msg->R3 -> sum->R4 -> _pr->R5 -> _cj->R6 -> i->R7 -> t7->R0 -> _ir->R1 │
+  │ REUSE  │ R0   │ t7           │ t2->R2 -> msg->R3 -> sum->R4 -> _pr->R5 -> _cj->R6 -> i->R7 -> t7->R0 -> _ir->R1 │
+  │ REUSE  │ R7   │ i            │ t2->R2 -> msg->R3 -> sum->R4 -> _pr->R5 -> _cj->R6 -> i->R7 -> t7->R0 -> _ir->R1 │
+  │ REUSE  │ R7   │ i            │ t2->R2 -> msg->R3 -> sum->R4 -> _pr->R5 -> _cj->R6 -> i->R7 -> t7->R0 -> _ir->R1 │
+  │ SPILL  │ R2   │ t2           │ msg->R3 -> sum->R4 -> _pr->R5 -> _cj->R6 -> i->R7 -> t7->R0 -> _ir->R1 │
+  │ ALLOC  │ R2   │ t9           │ msg->R3 -> sum->R4 -> _pr->R5 -> _cj->R6 -> i->R7 -> t7->R0 -> _ir->R1 -> t9->R2 │
+  │ REUSE  │ R1   │ _ir          │ msg->R3 -> sum->R4 -> _pr->R5 -> _cj->R6 -> i->R7 -> t7->R0 -> _ir->R1 -> t9->R2 │
+  │ REUSE  │ R2   │ t9           │ msg->R3 -> sum->R4 -> _pr->R5 -> _cj->R6 -> i->R7 -> t7->R0 -> _ir->R1 -> t9->R2 │
+  │ REUSE  │ R7   │ i            │ msg->R3 -> sum->R4 -> _pr->R5 -> _cj->R6 -> i->R7 -> t7->R0 -> _ir->R1 -> t9->R2 │
+  └────────┴──────┴──────────────┴──────────────────────────────────────────┘
+
+Assembly Output:
+; MiniPy Assembly Output
+
+section .data
+    a            dw  0
+    b            dw  0
+    i            dw  0
+    msg          dw  0
+    sum          dw  0
+
+section .text
+    global _start
+
+_start:
+    MOV  R0, #10                        ; a=10
+    MOV  R1, #3                         ; b=3
+    MOV  R2, #'Hello MiniPy!'           ; t2='Hello MiniPy!'
+    MOV  R3, R2                         ; msg=t2
+    STORE [msg], R3
+    MOV  R4, #13                        ; sum=13
+    CALL print, R3
+    MOV  R5, #13
+    CALL print, R5
+    MOV  R6, #1
+    CMP  R6, #0
+    JZ   L0
+    MOV  R5, #10
+    CALL print, R5
+    JMP  L1
+L0:
+    MOV  R5, #3
+    CALL print, R5
+L1:
+    MOV  R7, #1                         ; i=1
+L2:
+    MOV  R1, #3
+    CMP  R7, R1
+    SETLE R0                            ; t7=comparison
+    CMP  R0, #0
+    JZ   L3
+    CALL print, R7
+    MOV  R1, #1
+    ADD  R2, R7, R1                     ; t9=+
+    MOV  R7, R2                         ; i=t9
+    STORE [i], R7
+    JMP  L2
+L3:
+    HALT                                ; end
+    </div>
+
+    <div class="footer">
+        Generated by <strong>MiniPy Compiler</strong> • 2026
+    </div>
+</div>
+
+</body>
+</html>
